@@ -111,13 +111,17 @@ bins <- function( x , n_bins=30 , rm.na=TRUE , ... ) {
 }
 
 # just converts x,y,z lists of same length to a matrix for contour to plot
+# modified to be independent of the order in which vectors x and y are 
+# supplied and to accept rectangular, rather than square, data grids.
 contour_xyz <- function( x , y , z , ... ) {
-    ux <- unique(x)
-    uy <- unique(y)
-    n <- length(ux)
-    m <- matrix( z , nrow=n , ncol=n )
-    contour( ux , uy , m , ... )
+    df <- data.frame(x=x,y=y,z=z)
+    df <- df[order(y,x),]
+    ux <- unique(df[order(df$x),]$x) 
+    uy <- unique(df[order(df$y),]$y) 
+    m <- matrix( df$z , nrow=length(ux) , ncol=length(uy) )    
+   contour( ux , uy , m , ... )
 }
+
 
 # just converts inputs to form expected by image()
 image_xyz <- function( x , y , z , ... ) {
